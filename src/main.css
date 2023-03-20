@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    font-family: monospace;
+}
+
+input {
+    height: 30px;
+    padding: 5px;
+    background-color: #f1f1f1;
+}
