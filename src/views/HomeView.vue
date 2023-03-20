@@ -10,18 +10,17 @@ export default {
   data() {
     return {
       articles: [],
-      searchTerm: ""
     }
   }, 
   methods: {
-    updateSearchTerm(event) {
-      this.searchTerm = event.target.value;
+    updateArticleArray(array) {
+      this.articles = array;
     }
   }
 }
 </script>
 
 <template>
-  <SearchBar v-on:inputChange="updateSearchTerm"></SearchBar>
+  <SearchBar v-on:updateArray="updateArticleArray"></SearchBar>
   <ArticlesSection :articles="articles"></ArticlesSection>
 </template>
