@@ -11,8 +11,8 @@ export default {
         <h2><u>No Articles Found.</u></h2>
       </div>
       <div class="article" v-else v-for="article in articles">
-        <h2><u>{{article.faq}}</u></h2>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum nam aspernatur eum, id nihil veniam quae minima nesciunt tenetur dolorum ut voluptates optio voluptatem ratione aliquam recusandae veritatis soluta necessitatibus.</p>
+        <h2><u>{{ article.title }}</u></h2>
+        <p>{{ article.summary }}</p>
         <a href="">View full article</a>
       </div>
     </div>

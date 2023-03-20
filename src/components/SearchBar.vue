@@ -37,12 +37,38 @@ export default {
           }
         }
       ).then( function (res) {
-        console.log(res.data.results);
-        self.$emit('updateArray', res.data.results);
+        const resArray = res.data.results;
+        const labelsArray = [];
+        for (let i=0; i<resArray.length; i++) {
+          labelsArray.push(resArray[i].label);
+        }
+        self.getArticles(labelsArray, authToken);
       })
       .catch( function (err) {
         console.log(err)
       });
+    },
+    async getArticles(labelsArray, authToken) {
+      const finalArray = [];
+      for (let i=0; i<labelsArray.length; i++) {
+        await axios.post('https://apisandbox.synthetix.com/2.0/external/article', 
+          { userid: '123456', label: labelsArray[i], channel: '14' },
+          { headers: { 
+              'APPLICATIONKEY': applicationKey, 
+              'CONSUMERKEY': consumerKey, 
+              'Authorization': ' Bearer ' + authToken,
+            }
+          }
+        ).then( function (res) {
+          const title = res.data.question;
+          const summary = res.data.answer;
+          finalArray.push({ title, summary });
+        })
+        .catch( function (err) {
+          console.log(err);
+        });
+      }
+      this.$emit('updateArray', finalArray);
     },
     callApi() {
       const self = this;
