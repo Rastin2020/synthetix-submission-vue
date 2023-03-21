@@ -1,15 +1,33 @@
 <script>
 import axios from 'axios';
+import ErrorMessage from './ErrorMessage.vue';
+import Loader from './Loader.vue';
+
 const applicationKey = '7b829f3aeaf04561471b8e258739da3d';
 const consumerKey = '9800bcc32393905388563bb784b84720';
 
 export default {
+  components: {
+    ErrorMessage,
+    Loader,
+  },
   data() {
     return {
-      searchTerm: ''
+      searchTerm: '',
+      errorMessage: "",
+      showError: false,
+      loader: false,
     }
   },
   methods: {
+    configErrorMessage(on, message) {
+      if (on) {
+        this.showError = true;
+      } else {
+        this.showError = false;
+      }
+      this.errorMessage = message;
+    },
     validateSearchTerm() {
       const searchTerm = (this.searchTerm).trim();
       if (searchTerm === '') {
@@ -19,9 +37,13 @@ export default {
       }
     },
     initiateSearch() {
+      window.scroll(0,0);
+      this.loader = true;
+      this.configErrorMessage(false, '');
       const isValidSearch = this.validateSearchTerm();
       if (!isValidSearch) {
-        console.log("empty search term");
+        this.loader = false;
+        this.configErrorMessage(true, 'Please enter a search term.');
       } else {
         this.callApi();
       }
@@ -39,36 +61,48 @@ export default {
       ).then( function (res) {
         const resArray = res.data.results;
         const labelsArray = [];
-        for (let i=0; i<resArray.length; i++) {
-          labelsArray.push(resArray[i].label);
+        if (resArray !== undefined) {
+          for (let i=0; i<resArray.length; i++) {
+            labelsArray.push(resArray[i].label);
+          }
         }
         self.getArticles(labelsArray, authToken);
       })
       .catch( function (err) {
+        self.loader = true;
+        self.configErrorMessage(true, 'Internal error. Please try again in a few seconds.');
         console.log(err)
       });
     },
     async getArticles(labelsArray, authToken) {
-      const finalArray = [];
-      for (let i=0; i<labelsArray.length; i++) {
-        await axios.post('https://apisandbox.synthetix.com/2.0/external/article', 
-          { userid: '123456', label: labelsArray[i], channel: '14' },
-          { headers: { 
-              'APPLICATIONKEY': applicationKey, 
-              'CONSUMERKEY': consumerKey, 
-              'Authorization': ' Bearer ' + authToken,
+      if (labelsArray.length === 0) {
+        this.loader = false;
+        this.$emit('updateArticleArrayError', 'No articles found.');
+        this.$emit('updateArray', []);
+      } else {
+        const finalArray = [];
+        for (let i=0; i<labelsArray.length; i++) {
+          await axios.post('https://apisandbox.synthetix.com/2.0/external/article', 
+            { userid: '123456', label: labelsArray[i], channel: '14' },
+            { headers: { 
+                'APPLICATIONKEY': applicationKey, 
+                'CONSUMERKEY': consumerKey, 
+                'Authorization': ' Bearer ' + authToken,
+              }
             }
-          }
-        ).then( function (res) {
-          const title = res.data.question;
-          const summary = res.data.answer;
-          finalArray.push({ title, summary });
-        })
-        .catch( function (err) {
-          console.log(err);
-        });
+          ).then( function (res) {
+            const title = res.data.question;
+            const summary = res.data.answer;
+            finalArray.push({ title, summary });
+          })
+          .catch( function (err) {
+            self.configErrorMessage(true, 'Internal error. Please try again in a few seconds.');
+            console.log(err);
+          });
+        }
+        this.$emit('updateArray', finalArray);
+        this.loader = false;
       }
-      this.$emit('updateArray', finalArray);
     },
     callApi() {
       const self = this;
@@ -84,6 +118,8 @@ export default {
         self.searchArticles(authToken);
       })
       .catch( function (err) {
+        self.loader = false;
+        self.configErrorMessage(true, 'Internal error. Please try again in a few seconds.');
         console.log(err)
       });
     }
@@ -96,12 +132,16 @@ export default {
     <div class="flex flex-column center-align">
       <label class="margin-bottom-small large-text white-text" for="searchBox">Search for Articles</label>
       <div class="flex flex-row justify-center">
-        <input class="wide-width" name="searchBox" type="text" v-model="searchTerm">
+        <input class="wide-width" name="searchBox" type="text" v-model="searchTerm" v-on:keyup.enter="initiateSearch()">
         <button class="svg-holder hover" v-on:click="initiateSearch()">
           <img src="../assets/icons-search.svg">
         </button>
       </div>
     </div>
+  </div>
+  <div>
+    <ErrorMessage :showError="showError" :errorMessage="errorMessage"></ErrorMessage>
+    <Loader :loader="loader"></Loader>
   </div>
 </template>
 
@@ -117,6 +157,12 @@ export default {
 
 .large-text {
   font-size: 30px;
+}
+
+@media screen and (max-width: 375px) {
+  .large-text {
+    font-size: 2em;
+  }
 }
 
 .margin-bottom-small {

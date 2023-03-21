@@ -1,18 +1,18 @@
 <script>
 export default {
-  props: ['articles'],
+  props: ['articles', 'articleArrayError'],
 }
 </script>
 
 <template>
   <div class="articles-section">
-    <div class="grid two-column">
+    <div class="grid">
       <div class="article" v-if="articles.length === 0">
-        <h2><u>No Articles Found.</u></h2>
+        <h2><u>{{ articleArrayError }}</u></h2>
       </div>
       <div class="article" v-else v-for="article in articles">
         <h2><u>{{ article.title }}</u></h2>
-        <p>{{ article.summary }}</p>
+        <p class="break-word">{{ article.summary }}</p>
         <a href="">View full article</a>
       </div>
     </div>
@@ -22,7 +22,7 @@ export default {
 <style scoped>
 
 .articles-section {
-    margin: 30px;
+  margin: 30px;
 }
 
 .article {
@@ -31,10 +31,13 @@ export default {
 
 .grid {
   display: grid;
+  grid-template-columns: 50% 50%;
 }
 
-.two-column {
-  grid-template-columns: auto auto;
+@media screen and (max-width: 768px) {
+  .grid {
+    grid-template-columns: 100%;
+  }
 }
 
 </style>

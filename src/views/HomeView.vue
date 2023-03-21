@@ -10,17 +10,21 @@ export default {
   data() {
     return {
       articles: [],
+      articleArrayError: 'Use the search bar above to search for an article.',
     }
   }, 
   methods: {
     updateArticleArray(array) {
       this.articles = array;
+    },
+    setArticleError(message) {
+      this.articleArrayError = message;
     }
   }
 }
 </script>
 
 <template>
-  <SearchBar v-on:updateArray="updateArticleArray"></SearchBar>
-  <ArticlesSection :articles="articles"></ArticlesSection>
+  <SearchBar v-on:updateArticleArrayError="setArticleError" v-on:updateArray="updateArticleArray"></SearchBar>
+  <ArticlesSection :articleArrayError="articleArrayError" :articles="articles"></ArticlesSection>
 </template>
