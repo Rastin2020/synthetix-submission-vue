@@ -1,6 +1,10 @@
 <script>
+/* Our HomeVue.vue component is our page. It pulls in the other components it needs for the page through 
+imports */
 import SearchBar from '../components/SearchBar.vue';
 import ArticlesSection from '../components/ArticlesSection.vue';
+
+// We're using the Options Api for this project (already familiar with it in Vue2)
 
 export default {
   components: {
