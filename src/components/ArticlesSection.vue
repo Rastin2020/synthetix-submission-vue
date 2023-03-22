@@ -17,9 +17,8 @@ export default {
       
       <!-- Otherwise we render the following markup for the articles: -->
       <div class="article" v-else v-for="article in articles">
-        <h2><u>{{ article.title }}</u></h2>
-        <p class="break-word">{{ article.summary }}</p>
-        <a href="">View full article</a>
+        <h2 class="article-title">{{ article.title }}</h2>
+        <div class="break-word visible-background" v-html="article.summary"></div>
       </div>
 
     </div>
@@ -39,6 +38,17 @@ export default {
 .grid {
   display: grid;
   grid-template-columns: 50% 50%;
+}
+
+.article-title {
+  background: rgb(0 100 185);
+  color: white;
+  padding: 10px;
+  margin-bottom: -10px;
+}
+
+.visible-background {
+  background-color: #ebebeb;
 }
 
 @media screen and (max-width: 768px) {

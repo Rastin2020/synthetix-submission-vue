@@ -3,9 +3,8 @@ import axios from 'axios';
 import ErrorMessage from './ErrorMessage.vue';
 import Loader from './Loader.vue';
 
-// [HIDE these when app is complete]:
-const applicationKey = '7b829f3aeaf04561471b8e258739da3d';
-const consumerKey = '9800bcc32393905388563bb784b84720';
+const applicationKey = import.meta.env.VITE_APP_APPLICATIONKEY;
+const consumerKey = import.meta.env.VITE_APP_CONSUMERKEY;
 
 export default {
   components: {
