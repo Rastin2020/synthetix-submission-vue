@@ -1,6 +1,6 @@
 # synthetix submission
 
-## Project Setup (Install all the dependencies
+## Project Setup (Install all the dependencies)
 
 ```sh
 npm install
@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Compile and Minify for Production (not needed to run locally of course, so ignore this)
 
 ```sh
 npm run build
